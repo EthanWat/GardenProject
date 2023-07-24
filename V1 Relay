@@ -1,0 +1,21 @@
+const int RELAY_PIN = 3;
+
+int soil =0;
+void setup(){
+  pinMode(RELAY_PIN, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop(){
+  soil = analogRead(A0);
+
+  Serial.print("Soil moisture = ");
+  Serial.println(soil);
+ 
+  if (soil > 900){
+    digitalWrite(RELAY_PIN, HIGH);
+  }
+  else 
+    digitalWrite(RELAY_PIN, LOW);
+    delay(1000);
+}
