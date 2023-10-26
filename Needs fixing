@@ -1,0 +1,117 @@
+
+#include <DHT.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#define DHT11PIN 7
+
+const int BUTTON = 2;
+const int RELAY1= 3;
+const int RELAY2= 4;
+const int RELAY3= 5;
+const int SOIL_PIN = A0;
+
+
+LiquidCrystal_I2C lcd(0x27, 16, 2); // set the LCD address to 0x27 for a 16 chars and 2 line display
+
+int screenState;
+bool buttonState = false;
+unsigned long buttonOnTime;
+dht = DHT11;
+void setup(){
+   //setting up the screen
+  lcd.init();
+  lcd.backlight();
+  //the setup for the three relays and button
+   pinMode(RELAY1, OUTPUT);
+  pinMode(RELAY2, OUTPUT);
+  pinMode(RELAY3, OUTPUT);
+  pinMode(BUTTON, INPUT_PULLUP);
+  //start the serial output
+  Serial.begin(9600);
+  //set the button pin to be an interupt
+  attachInterrupt(digitalPinToInterrupt(BUTTON), LCD, RISING);
+}
+
+void loop(){
+    //reading the soilmoisture sensor and converting to percentage\/\/
+  int soil;
+  float soil_percentage;
+  soil = analogRead(SOIL_PIN);
+  soil_percentage = ( 100 - ( (soil/1023.00) * 100 ) );
+  //reading the humidity and temperature levels\/\/
+  int chk = DHT11.read(DHT11PIN);
+  //Printing the soil moisture levels on the serial\/\/
+  Serial.print("Soil moisture = ");
+  Serial.println(soil_percentage);
+  Serial.print("%");
+  //Printing the temperature levels on the serial\/\/
+  Serial.print("Temperature % = ");
+  Serial.println(DHT11.temperature);
+  //Printing the humidity levels on the serial\/\/
+  Serial.print("Humidity % = ");
+  Serial.println(DHT11.humidity);
+  //turning on/off the relay based on soil moisture levels\/\/
+  if (soil_percentage < 20){
+    digitalWrite(RELAY1, HIGH);}
+  else
+    digitalWrite(RELAY1, LOW);
+  //turning on/off the relay based on temperature levels\/\/
+  if (DHT11.temperature > 17){
+    digitalWrite(RELAY2, HIGH);}
+  else
+    digitalWrite(RELAY2, LOW);
+
+  //turning on/off the relay based on humidity levels\/\/
+  if (DHT11.humidity > 60){
+    digitalWrite(RELAY3, HIGH);}
+  else
+    digitalWrite(RELAY3, LOW);
+  delay(500);
+
+  
+  
+  
+  
+  if (buttonState==true){
+    if (millis()-buttonOnTime <5000){
+    screenOn();
+    displayScreen();
+    }
+    else
+      screenOff();
+    }
+
+    
+    }
+
+//Turns the screen on
+void screenOn() {
+  lcd.display();
+  lcd.backlight();
+}
+//Turns the screen off
+void screenOff() {
+  lcd.noDisplay();
+  lcd.noBacklight();
+}
+//Draws stuff on the LCD screen
+void displayScreen() {
+  //first line
+  lcd.setCursor(2, 0);
+  lcd.print("T:");
+  lcd.print("num");
+  lcd.print("C   ");
+  lcd.print("H:");
+  lcd.print("num");
+  lcd.print("%");
+  //second line
+  lcd.setCursor(2, 1);
+  lcd.print("SM:");
+  lcd.print("num");
+  lcd.print("%");
+}
+
+void LCD(){
+  buttonState = true;
+  buttonOnTime = millis();
+}
