@@ -1,13 +1,5 @@
 
-  lcd.print("T:");
-  lcd.print("num");
-  lcd.print("C   ");
-  lcd.print("H:");
-  lcd.print("num");
-  lcd.print("%");
-  //second line
-  lcd.setCursor(2, 1);
-  lcd.print("SM:");
+
 #include <DHT.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
@@ -106,9 +98,19 @@ void screenOff() {
 //Draws stuff on the LCD screen
 void displayScreen() {
   //first line
+    lcd.print("T:");
+  lcd.print("num");
+  lcd.print("C   ");
+  lcd.print("H:");
+  lcd.print("num");
+  lcd.print("%");
+  //second line
+  lcd.setCursor(2, 1);
+  lcd.print("SM:");
   lcd.setCursor(2, 0);
   lcd.print("num");
   lcd.print("%");
+  
 }
 
 void LCD(){
